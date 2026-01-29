@@ -1,5 +1,4 @@
-'''Zero-Latency Voice Knowledge Base (RAG System)'''
-Overview
+**Zero-Latency Voice Knowledge Base (RAG System) Overview**
 
 This project implements a zero-latency, voice-based Retrieval-Augmented Generation (RAG) system for a CCaaS-style Voice AI agent.
 The system answers complex hardware troubleshooting questions by querying a large technical manual (1,000+ pages) while maintaining a Time-to-First-Byte (TTFB) under 800ms for audio output.
