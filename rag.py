@@ -1,19 +1,37 @@
-conversation_history = []
+import pickle
+import faiss
+from sentence_transformers import SentenceTransformer
 
 
-def add_to_history(text):
-    conversation_history.append(text)
+def simple_split(text, chunk_size=500, overlap=100):
+    words = text.split()
+    chunks = []
+    start = 0
+
+    while start < len(words):
+        end = start + chunk_size
+        chunk = " ".join(words[start:end])
+        chunks.append(chunk)
+        start = end - overlap
+
+    return chunks
 
 
-def rewrite_query(partial_text):
-    text = partial_text.lower()
+def ingest(documents):
+    chunks = simple_split(documents)
 
-    if "second" in text and conversation_history:
-        last_topic = conversation_history[-1].lower()
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    embeddings = model.encode(chunks)
 
-        if "power module" in last_topic:
-            return "second power module in the server"
+    index = faiss.IndexFlatL2(embeddings.shape[1])
+    index.add(embeddings)
 
-        return f"{partial_text} related to {conversation_history[-1]}"
+    with open("rag_store.pkl", "wb") as f:
+        pickle.dump((index, chunks), f)
 
-    return partial_text
+    print(f"✅ Vector store created with {len(chunks)} chunks")
+
+
+if __name__ == "__main__":
+    with open("data/manual.txt", "r", encoding="utf-8") as f:
+        ingest(f.read())

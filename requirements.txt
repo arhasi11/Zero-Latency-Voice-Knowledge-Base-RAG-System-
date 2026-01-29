@@ -1,4 +1,6 @@
 langchain
-faiss-cpu
 sentence-transformers
+faiss-cpu
 rank-bm25
+numpy
+torch
